@@ -2,9 +2,13 @@
 
 angular.module('paths', [
   'paths.Pie',
+  'paths.Bar',
+  'paths.Stock'
 ]).config(function($compileProvider, Pie, Bar, Stock) {
   [
     Pie,
+    Bar,
+    Stock
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph;
 
