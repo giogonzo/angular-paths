@@ -29,16 +29,25 @@ module.exports = function(grunt) {
       }
     },
 
-    copy: {
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
-          dot: true,
-          cwd: 'src',
-          dest: 'dist',
-          src: ['{,*/}*.js']
+          cwd: 'dist',
+          src: 'angular-paths.js',
+          dest: 'dist'
         }]
+      }
+    },
+
+    concat: {
+      dist: {
+        dest: 'dist/angular-paths.js',
+        src: ['src/{,*/}*.js']
       },
+    },
+
+    copy: {
       example: {
         files: [{
           expand: true,
@@ -72,7 +81,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'newer:jshint',
     'clean:dist',
-    'copy:dist'
+    'concat:dist',
+    'ngAnnotate'
   ]);
 
   grunt.registerTask('example', [
