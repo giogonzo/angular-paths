@@ -1,0 +1,37 @@
+{
+  "name": "angular-paths",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "load-grunt-tasks": "~0.6.0",
+    "time-grunt": "~0.4.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "jshint-stylish": "~0.4.0",
+    "grunt-newer": "~0.7.0",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-watch": "~0.6.1"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "description": "angular directives for path.js high-level API",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/buildo/angular-paths.git"
+  },
+  "keywords": [
+    "angular",
+    "svg",
+    "paths",
+    "charts"
+  ],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/buildo/angular-paths/issues"
+  },
+  "homepage": "https://github.com/buildo/angular-paths"
+}

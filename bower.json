@@ -1,0 +1,28 @@
+{
+  "name": "angular-paths",
+  "version": "0.1.0",
+  "authors": [
+    "Giovanni Gonzaga <giovanni@buildo.io>"
+  ],
+  "description": "directives for path.js high-level API",
+  "main": "dist/angular-paths.js",
+  "keywords": [
+    "angular",
+    "svg",
+    "paths",
+    "charts"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/buildo/angular-paths",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paths-js": "~0.2.12",
+    "angular": "~1.2.22"
+  }
+}
