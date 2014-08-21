@@ -1,69 +1,53 @@
 'use strict';
 
-(function() {
-var angularPaths = angular.module('paths', []);
-var prefix = 'paths';
+angular.module('paths', [
+  'paths.Pie',
+]).config(function($compileProvider, Pie, Bar, Stock) {
+  [
+    Pie,
+  ].forEach(function(dir) {
+    var name = 'paths' + dir.graph;
 
-[{
-  graph: 'Pie',
-  defaults: function(viewport) {
-    return {
-      center: [viewport.width / 2, viewport.height / 2],
-      r: 0,
-      R: Math.min(viewport.width, viewport.height) / 2
-    };
-  },
-  template: [
-    '<svg ',
-      'ng-attr-width="{{viewport.width}}" ',
-      'ng-attr-height="{{viewport.height}}" ',
-      'ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">',
+    $compileProvider.directive(name, function($compile) {
+      var self = {
+        scope: {}
+      };
+      self.scope[name] = '=';
 
-      '<path ng-repeat="curve in curves" ',
-        'ng-attr-d="{{curve.sector.path.print()}}" ',
-      '/>',
+      return angular.extend(self, {
+        restrict: 'AE',
+        link: function(scope, element, attributes) {
 
-    '</svg>'
-  ].join('')
-}].forEach(function(dir) {
-  var fullName = prefix + dir.graph;
-  angularPaths.directive(fullName, function($compile) {
-    var self = {
-      scope: {}
-    };
-    self.scope[fullName] = '=';
-    return angular.extend(self, {
-      restrict: 'AE',
-      link: function(scope, element, attributes) {
-        var init = function() {
-          scope.$watch(fullName, function(source, oldSource) {
-            if (!!source && !!source.data) {
-              scope.curves = paths[dir.graph](
-                angular.extend(source, dir.defaults(scope.viewport))
-              ).curves;
-            }
-          }, true);
+          var init = function() {
+            scope.$watch(name, function(source, oldSource) {
+              if (!!source && !!source.data) {
+                scope.curves = paths[dir.graph](
+                  angular.extend(dir.defaults(scope.viewport), source)
+                ).curves;
 
-          var contents = angular.element(dir.template);
-          $compile(contents)(scope);
-          element.append(contents);
-        };
+              }
+            }, true);
 
-        scope.$watchCollection(function() {
-          return {
-            width: element.width(),
-            height: element.height()
+            var contents = angular.element(dir.template);
+            $compile(contents)(scope);
+            element.append(contents);
           };
-        }, function(viewport, oldViewport) {
-          if (!!viewport.width && !!viewport.height) {
-            scope.viewport = viewport;
-            if (!!oldViewport) {
-              init();
+
+          scope.$watchCollection(function() {
+            return {
+              width: element.width(),
+              height: element.height()
+            };
+          }, function(viewport, oldViewport) {
+            if (!!viewport.width && !!viewport.height) {
+              scope.viewport = viewport;
+              if (!!oldViewport) {
+                init();
+              }
             }
-          }
-        });
-      }
+          });
+        }
+      });
     });
   });
 });
-})();
