@@ -22,16 +22,65 @@ angular.module('paths', [
       return angular.extend(self, {
         restrict: 'AE',
         link: function(scope, element, attributes) {
+          var _graphCfg; // once-binded graph config
+
+          var updateGraph = function(graphConfig) {
+            scope.curves = paths[dir.graph](
+              angular.extend(dir.defaults(scope.viewport), graphConfig)
+            ).curves;
+          };
+
+          var startSizeWatch = function() {
+            // keep watching until we get a valid DOM computed size
+            // or stop right away if we have user provided dimensions
+            var sizeWatchDereg = scope.$watchCollection(function() {
+              return {
+                width: element.width(),
+                height: element.height()
+              };
+            }, function(viewport, oldViewport) {
+              // ovveride with user sizes if available
+              viewport = angular.extend(viewport, {
+                width: (_graphCfg || {}).width || viewport.width,
+                height: (_graphCfg || {}).height || viewport.height
+              });
+
+              if (!!viewport.width && !!viewport.height) {
+                scope.viewport = viewport;
+
+                if (!!oldViewport) {
+                  init();
+                }
+
+                if (!!_graphCfg && !!_graphCfg.width && !!_graphCfg.height) {
+                  // stop watching since we are using
+                  // user's dimensions
+                  sizeWatchDereg();
+                }
+              }
+            });
+          };
 
           var init = function() {
-            scope.$watch(name, function(source, oldSource) {
-              if (!!source && !!source.data) {
-                scope.curves = paths[dir.graph](
-                  angular.extend(dir.defaults(scope.viewport), source)
-                ).curves;
+            var initWatchDereg = scope.$watch(name, function(graphCfg) {
+              if (!!graphCfg && !!graphCfg.data) {
+                updateGraph(graphCfg);
 
+                // stop watching the whole config
+                initWatchDereg();
+                _graphCfg = graphCfg;
+
+                // set up a deep watch for 'data' only
+                scope.$watch(name + '.data', function(data) {
+                  updateGraph(angular.extend(_graphCfg, {
+                    data: data
+                  }));
+                // TODO: check whether it makes sense to optimize
+                // this with a $watchCollection
+                // on 1 (more?) nesting levels
+                }, true);
               }
-            }, true);
+            });
 
             $getTemplate(attributes.pathsTemplate).then(function(template) {
               var contents = angular.element(template);
@@ -40,19 +89,7 @@ angular.module('paths', [
             });
           };
 
-          scope.$watchCollection(function() {
-            return {
-              width: element.width(),
-              height: element.height()
-            };
-          }, function(viewport, oldViewport) {
-            if (!!viewport.width && !!viewport.height) {
-              scope.viewport = viewport;
-              if (!!oldViewport) {
-                init();
-              }
-            }
-          });
+          startSizeWatch();
         }
       });
     });
