@@ -4,22 +4,24 @@ angular.module('paths', [
   'getTemplate',
   'paths.Pie',
   'paths.Bar',
-  'paths.Stock'
-]).config(function($compileProvider, Pie, Bar, Stock) {
+  'paths.Stock',
+  'paths.SmoothLine'
+]).config(function($compileProvider, Pie, Bar, Stock, SmoothLine) {
   [
     Pie,
     Bar,
-    Stock
+    Stock,
+    SmoothLine
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph;
 
     $compileProvider.directive(name, function($compile, $getTemplate) {
-      var self = {
-        scope: {}
-      };
-      self.scope[name] = '=';
+      var scope = {};
+      scope[name] = '=';
 
-      return angular.extend(self, {
+      return {
+        scope: true,
+        replace: true,
         restrict: 'AE',
         link: function(scope, element, attributes) {
           var _graphCfg; // once-binded graph config
@@ -62,16 +64,21 @@ angular.module('paths', [
           };
 
           var init = function() {
-            var initWatchDereg = scope.$watch(name, function(graphCfg) {
+            var scopeName = attributes[name];
+            var initWatchDereg = scope.$watch(scopeName, function(graphCfg) {
               if (!!graphCfg && !!graphCfg.data) {
-                updateGraph(graphCfg);
+                // TODO
+                // if (!!dir.selectedItem && scope.curves.length > 0) {
+                //   scope[dir.selectedItem] = scope.curves[0];
+                // }
 
                 // stop watching the whole config
                 initWatchDereg();
                 _graphCfg = graphCfg;
 
                 // set up a deep watch for 'data' only
-                scope.$watch(name + '.data', function(data) {
+                scope.$watch(scopeName + '.data', function(data) {
+                  // redraw
                   updateGraph(angular.extend(_graphCfg, {
                     data: data
                   }));
@@ -79,19 +86,26 @@ angular.module('paths', [
                 // this with a $watchCollection
                 // on 1 (more?) nesting levels
                 }, true);
-              }
-            });
 
-            $getTemplate(attributes.pathsTemplate).then(function(template) {
-              var contents = angular.element(template);
-              $compile(contents)(scope);
-              element.append(contents);
+                // handle 'template' option
+                var templateOrUrl = !!_graphCfg && !!_graphCfg.template ? _graphCfg.template : attributes.pathsTemplate;
+                if (!!templateOrUrl) {
+                  $getTemplate(templateOrUrl).then(function(template) {
+                    var contents = angular.element(template);
+                    $compile(contents)(scope);
+                    element.html(contents);
+                  });
+                }
+
+                // first draw
+                updateGraph(_graphCfg);
+              }
             });
           };
 
           startSizeWatch();
         }
-      });
+      };
     });
   });
 });

@@ -18,13 +18,24 @@
   <body ng-app="angularPathsExample">
 
     <div ng-controller="PieCtrl">
-        <div class="graph paths-pie" paths-pie="pie" paths-template="templates/pie.html"></div>
+        <div class="graph paths-pie" paths-pie="pie">
+            <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
+              <path ng-repeat="curve in curves" ng-attr-d="{{curve.sector.path.print()}}" fill="black" stroke="white"/>
+            </svg>
+        </div>
     </div>
-    <div ng-controller="BarCtrl">
-        <div class="graph paths-bar" paths-bar="bar" paths-template="templates/bar.html"></div>
+    <div ng-controller="BarCtrl" ng-init="foo = 'bar'">
+        <div class="graph paths-bar" paths-bar="bar">
+            <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
+              <path ng-repeat="curve in curves" ng-attr-d="{{curve.line.path.print()}}"/>
+            </svg>
+        </div>
     </div>
-    <div ng-controller="StockCtrl">
-        <div class="graph paths-stock" paths-stock="stock" paths-template="templates/stock.html"></div>
+    <!-- <div ng-controller="StockCtrl">
+        <div class="graph paths-stock" paths-stock="stock" paths-template="templates/line.html"></div>
     </div>
+    <div ng-controller="SmoothLineCtrl">
+        <div class="graph paths-smooth-line" paths-smooth-line="smoothLine" paths-template="templates/line.html"></div>
+    </div> -->
   </body>
 </html>

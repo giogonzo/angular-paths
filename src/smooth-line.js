@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('paths.Stock', []).constant('Stock', {
-  graph: 'Stock',
+angular.module('paths.SmoothLine', []).constant('SmoothLine', {
+  graph: 'SmoothLine',
   defaults: function(viewport) {
     return {
       width: viewport.width,
       height: viewport.height
     };
   },
-  selectedItem: 'stock'
+  selectedItem: 'smoothLine'
 });
