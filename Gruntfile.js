@@ -61,6 +61,11 @@ module.exports = function(grunt) {
           src: 'paths.js'
         }, {
           expand: true,
+          cwd: 'bower_components/angular-get-template/dist/',
+          dest: 'example/lib/',
+          src: 'angular-get-template.js'
+        }, {
+          expand: true,
           cwd: 'dist/',
           dest: 'example/lib/',
           src: 'angular-paths.js'

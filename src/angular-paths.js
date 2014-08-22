@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('paths', [
+  'getTemplate',
   'paths.Pie',
   'paths.Bar',
   'paths.Stock'
@@ -12,7 +13,7 @@ angular.module('paths', [
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph;
 
-    $compileProvider.directive(name, function($compile) {
+    $compileProvider.directive(name, function($compile, $getTemplate) {
       var self = {
         scope: {}
       };
@@ -32,9 +33,11 @@ angular.module('paths', [
               }
             }, true);
 
-            var contents = angular.element(dir.template);
-            $compile(contents)(scope);
-            element.append(contents);
+            $getTemplate(attributes.pathsTemplate).then(function(template) {
+              var contents = angular.element(template);
+              $compile(contents)(scope);
+              element.append(contents);
+            });
           };
 
           scope.$watchCollection(function() {

@@ -23,6 +23,7 @@
   ],
   "dependencies": {
     "paths-js": "~0.2.12",
-    "angular": "~1.2.22"
+    "angular": "~1.2.22",
+    "angular-get-template": "~0.1.0"
   }
 }

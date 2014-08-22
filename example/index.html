@@ -7,6 +7,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="lib/angular.js"></script>
     <script src="lib/paths.js"></script>
+    <script src="lib/angular-get-template.js"></script>
 
     <script src="lib/angular-paths.js"></script>
 
@@ -17,13 +18,13 @@
   <body ng-app="angularPathsExample">
 
     <div ng-controller="PieCtrl">
-        <div class="graph paths-pie" paths-pie="pie"></div>
+        <div class="graph paths-pie" paths-pie="pie" paths-template="templates/pie.html"></div>
     </div>
     <div ng-controller="BarCtrl">
-        <div class="graph paths-bar" paths-bar="bar"></div>
+        <div class="graph paths-bar" paths-bar="bar" paths-template="templates/bar.html"></div>
     </div>
     <div ng-controller="StockCtrl">
-        <div class="graph paths-stock" paths-stock="stock"></div>
+        <div class="graph paths-stock" paths-stock="stock" paths-template="templates/stock.html"></div>
     </div>
   </body>
 </html>
