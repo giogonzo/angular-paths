@@ -4,7 +4,7 @@
   "authors": [
     "Giovanni Gonzaga <giovanni@buildo.io>"
   ],
-  "description": "directives for path.js high-level API",
+  "description": "directives for paths.js high-level API",
   "main": "dist/angular-paths.js",
   "keywords": [
     "angular",
