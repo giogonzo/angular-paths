@@ -2,11 +2,12 @@
 
 angular.module('paths', [
   'getTemplate',
+  'paths.PathsProvider',
   'paths.Pie',
   'paths.Bar',
   'paths.Stock',
   'paths.SmoothLine'
-]).config(function($compileProvider, Pie, Bar, Stock, SmoothLine) {
+]).config(function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine) {
   [
     Pie,
     Bar,
@@ -14,12 +15,9 @@ angular.module('paths', [
     SmoothLine
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph,
-      path = paths[dir.graph];
+      path = PathsProvider.Paths[dir.graph];
 
     $compileProvider.directive(name, function($compile, $getTemplate) {
-      var scope = {};
-      scope[name] = '=';
-
       return {
         scope: true,
         replace: true,
@@ -28,7 +26,7 @@ angular.module('paths', [
           var _graphCfg; // once-binded graph config
 
           var updateGraph = function() {
-            scope.curves = path(_graphCfg).curves.map(function(curve, i) {
+            scope.curves = path(_graphCfg).curves.map(function(curve) {
               return angular.extend(curve, {
                 _line: !!curve.line ? curve.line.path.print() : undefined,
                 _area: !!curve.area ? curve.area.path.print() : undefined,
