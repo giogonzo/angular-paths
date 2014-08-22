@@ -1,10 +1,136 @@
 'use strict';
 
-(function() {
-var angularPaths = angular.module('paths', []);
-var prefix = 'paths';
+angular.module('paths', [
+  'getTemplate',
+  'paths.PathsProvider',
+  'paths.Pie',
+  'paths.Bar',
+  'paths.Stock',
+  'paths.SmoothLine'
+]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "Stock", "SmoothLine", function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine) {
+  [
+    Pie,
+    Bar,
+    Stock,
+    SmoothLine
+  ].forEach(function(dir) {
+    var name = 'paths' + dir.graph,
+      path = PathsProvider.Paths[dir.graph];
 
-[{
+    $compileProvider.directive(name, function($compile, $getTemplate) {
+      return {
+        scope: true,
+        replace: true,
+        restrict: 'AE',
+        link: function(scope, element, attributes) {
+          var _graphCfg; // once-binded graph config
+
+          var updateGraph = function() {
+            scope.curves = path(_graphCfg).curves.map(function(curve) {
+              return angular.extend(curve, {
+                _line: !!curve.line ? curve.line.path.print() : undefined,
+                _area: !!curve.area ? curve.area.path.print() : undefined,
+                _sector: !!curve.sector ? curve.sector.path.print() : undefined
+              });
+            });
+          };
+
+          var startSizeWatch = function() {
+            // keep watching until we get a valid DOM computed size
+            // or stop right away if we have user provided dimensions
+            var sizeWatchDereg = scope.$watchCollection(function() {
+              return {
+                width: element.width(),
+                height: element.height()
+              };
+            }, function(viewport, oldViewport) {
+              // ovveride with user sizes if available
+              viewport = angular.extend(viewport, {
+                width: (_graphCfg || {}).width || viewport.width,
+                height: (_graphCfg || {}).height || viewport.height
+              });
+
+              if (!!viewport.width && !!viewport.height) {
+                scope.viewport = viewport;
+
+                if (!!oldViewport) {
+                  init();
+                }
+
+                if (!!_graphCfg && !!_graphCfg.width && !!_graphCfg.height) {
+                  // stop watching since we are using
+                  // user's dimensions
+                  sizeWatchDereg();
+                }
+              }
+            });
+          };
+
+          var init = function() {
+            var scopeName = attributes[name];
+            var initWatchDereg = scope.$watch(scopeName, function(graphCfg) {
+              if (!!graphCfg && !!graphCfg.data) {
+                // stop watching the whole config
+                initWatchDereg();
+                _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg);
+
+                // set up a deep watch for 'data' only
+                scope.$watch(scopeName + '.data', function(data) {
+                  // redraw
+                  _graphCfg.data = data;
+                  updateGraph();
+                // TODO: check whether it makes sense to optimize
+                // this with a $watchCollection
+                // on 1 (more?) nesting levels
+                }, true);
+
+                // handle 'template' option
+                var templateOrUrl = !!_graphCfg && !!_graphCfg.template ? _graphCfg.template : attributes.pathsTemplate;
+                if (!!templateOrUrl) {
+                  $getTemplate(templateOrUrl).then(function(template) {
+                    var contents = angular.element(template);
+                    $compile(contents)(scope);
+                    element.html(contents);
+                  });
+                }
+
+                // first draw
+                updateGraph();
+              }
+            });
+          };
+
+          startSizeWatch();
+        }
+      };
+    });
+  });
+}]);
+
+'use strict';
+
+angular.module('paths.Bar', []).constant('Bar', {
+  graph: 'Bar',
+  defaults: function(viewport) {
+    return {
+      width: viewport.width,
+      height: viewport.height
+    };
+  }
+});
+'use strict';
+
+angular.module('paths.PathsProvider', []).provider('Paths', function() {
+  return {
+    Paths: paths,
+    $get: function() {
+      return paths;
+    }
+  };
+});
+'use strict';
+
+angular.module('paths.Pie', []).constant('Pie', {
   graph: 'Pie',
   defaults: function(viewport) {
     return {
@@ -12,58 +138,29 @@ var prefix = 'paths';
       r: 0,
       R: Math.min(viewport.width, viewport.height) / 2
     };
-  },
-  template: [
-    '<svg ',
-      'ng-attr-width="{{viewport.width}}" ',
-      'ng-attr-height="{{viewport.height}}" ',
-      'ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">',
-
-      '<path ng-repeat="curve in curves" ',
-        'ng-attr-d="{{curve.sector.path.print()}}" ',
-      '/>',
-
-    '</svg>'
-  ].join('')
-}].forEach(function(dir) {
-  var fullName = prefix + dir.graph;
-  angularPaths.directive(fullName, function($compile) {
-    var self = {
-      scope: {}
-    };
-    self.scope[fullName] = '=';
-    return angular.extend(self, {
-      restrict: 'AE',
-      link: function(scope, element, attributes) {
-        var init = function() {
-          scope.$watch(fullName, function(source, oldSource) {
-            if (!!source && !!source.data) {
-              scope.curves = paths[dir.graph](
-                angular.extend(source, dir.defaults(scope.viewport))
-              ).curves;
-            }
-          }, true);
-
-          var contents = angular.element(dir.template);
-          $compile(contents)(scope);
-          element.append(contents);
-        };
-
-        scope.$watchCollection(function() {
-          return {
-            width: element.width(),
-            height: element.height()
-          };
-        }, function(viewport, oldViewport) {
-          if (!!viewport.width && !!viewport.height) {
-            scope.viewport = viewport;
-            if (!!oldViewport) {
-              init();
-            }
-          }
-        });
-      }
-    });
-  });
+  }
 });
-})();
+'use strict';
+
+angular.module('paths.SmoothLine', []).constant('SmoothLine', {
+  graph: 'SmoothLine',
+  defaults: function(viewport) {
+    return {
+      width: viewport.width,
+      height: viewport.height
+    };
+  },
+  selectedItem: 'smoothLine'
+});
+'use strict';
+
+angular.module('paths.Stock', []).constant('Stock', {
+  graph: 'Stock',
+  defaults: function(viewport) {
+    return {
+      width: viewport.width,
+      height: viewport.height
+    };
+  },
+  selectedItem: 'stock'
+});
