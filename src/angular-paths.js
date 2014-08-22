@@ -13,7 +13,8 @@ angular.module('paths', [
     Stock,
     SmoothLine
   ].forEach(function(dir) {
-    var name = 'paths' + dir.graph;
+    var name = 'paths' + dir.graph,
+      path = paths[dir.graph];
 
     $compileProvider.directive(name, function($compile, $getTemplate) {
       var scope = {};
@@ -26,10 +27,14 @@ angular.module('paths', [
         link: function(scope, element, attributes) {
           var _graphCfg; // once-binded graph config
 
-          var updateGraph = function(graphConfig) {
-            scope.curves = paths[dir.graph](
-              angular.extend(dir.defaults(scope.viewport), graphConfig)
-            ).curves;
+          var updateGraph = function() {
+            scope.curves = path(_graphCfg).curves.map(function(curve, i) {
+              return angular.extend(curve, {
+                _line: !!curve.line ? curve.line.path.print() : undefined,
+                _area: !!curve.area ? curve.area.path.print() : undefined,
+                _sector: !!curve.sector ? curve.sector.path.print() : undefined
+              });
+            });
           };
 
           var startSizeWatch = function() {
@@ -67,21 +72,15 @@ angular.module('paths', [
             var scopeName = attributes[name];
             var initWatchDereg = scope.$watch(scopeName, function(graphCfg) {
               if (!!graphCfg && !!graphCfg.data) {
-                // TODO
-                // if (!!dir.selectedItem && scope.curves.length > 0) {
-                //   scope[dir.selectedItem] = scope.curves[0];
-                // }
-
                 // stop watching the whole config
                 initWatchDereg();
-                _graphCfg = graphCfg;
+                _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg);
 
                 // set up a deep watch for 'data' only
                 scope.$watch(scopeName + '.data', function(data) {
                   // redraw
-                  updateGraph(angular.extend(_graphCfg, {
-                    data: data
-                  }));
+                  _graphCfg.data = data;
+                  updateGraph();
                 // TODO: check whether it makes sense to optimize
                 // this with a $watchCollection
                 // on 1 (more?) nesting levels
@@ -98,7 +97,7 @@ angular.module('paths', [
                 }
 
                 // first draw
-                updateGraph(_graphCfg);
+                updateGraph();
               }
             });
           };

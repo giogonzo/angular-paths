@@ -1,4 +1,8 @@
-<svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
-  <path ng-attr-d="{{selected.line.path.print()}}" stroke="black" fill="none"/>
-  <path ng-attr-d="{{selected.area.path.print()}}" stroke="none" fill="black"/>
+<select ng-model="selectedIndex" ng-init="selectedIndex = 0" ng-options="curve.index as 'Curve ' + curve.index for curve in curves" style="position: absolute">
+  <option value="">Select curve...</option>
+</select>
+
+<svg ng-if="curves.length > 0" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
+  <path ng-if="selectedIndex >= 0" ng-attr-d="{{curves[selectedIndex]._line}}" stroke="black" fill="none"/>
+  <path ng-if="selectedIndex >= 0" ng-attr-d="{{curves[selectedIndex]._area}}" stroke="none" fill="black"/>
 </svg>
