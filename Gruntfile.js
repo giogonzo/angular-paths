@@ -85,6 +85,13 @@ module.exports = function(grunt) {
         tasks: ['example'],
       }
     },
+
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
+    },
   });
 
   grunt.registerTask('build', [
@@ -105,5 +112,10 @@ module.exports = function(grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('test', ['karma']);
+
+  grunt.registerTask('default', [
+    'test',
+    'build'
+  ]);
 };
