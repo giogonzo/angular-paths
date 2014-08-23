@@ -56,6 +56,11 @@ module.exports = function(grunt) {
           src: 'angular.js'
         }, {
           expand: true,
+          cwd: 'bower_components/jquery/dist/',
+          dest: 'example/lib/',
+          src: 'jquery.js'
+        }, {
+          expand: true,
           cwd: 'bower_components/paths-js/dist/global/',
           dest: 'example/lib/',
           src: 'paths.js'
