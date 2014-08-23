@@ -24,7 +24,6 @@
   "dependencies": {
     "paths-js": "~0.2.12",
     "angular": "~1.2.22",
-    "angular-get-template": "~0.1.0",
-    "jquery": "~2.1.1"
+    "angular-get-template": "~0.1.0"
   }
 }

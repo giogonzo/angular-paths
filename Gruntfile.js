@@ -41,6 +41,10 @@ module.exports = function(grunt) {
     },
 
     concat: {
+      options: {
+         banner: '(function (angular) {\n',
+        footer: '})(window.angular);'
+      },
       dist: {
         dest: 'dist/angular-paths.js',
         src: ['src/{,*/}*.js']
@@ -54,11 +58,6 @@ module.exports = function(grunt) {
           cwd: 'bower_components/angular/',
           dest: 'example/lib/',
           src: 'angular.js'
-        }, {
-          expand: true,
-          cwd: 'bower_components/jquery/dist/',
-          dest: 'example/lib/',
-          src: 'jquery.js'
         }, {
           expand: true,
           cwd: 'bower_components/paths-js/dist/global/',
