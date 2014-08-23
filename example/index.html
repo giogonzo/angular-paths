@@ -42,9 +42,9 @@
           <option value="">Select pokemon...</option>
         </select>
 
-        <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
-          <path ng-if="selectedIndex >= 0" ng-repeat="ring in rings" ng-attr-d="{{ring._polygon}}" fill="none" stroke="grey"/>
-          <path ng-if="selectedIndex >= 0" ng-attr-d="{{curves[selectedIndex]._polygon}}"/>
+        <svg ng-if="!!viewport && selectedIndex >= 0 && curves.length > 0" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
+          <path ng-repeat="ring in rings" ng-attr-d="{{ring._polygon}}" fill="none" stroke="grey"/>
+          <path ng-attr-d="{{curves[selectedIndex]._polygon}}"/>
         </svg>
       </div>
     </div>

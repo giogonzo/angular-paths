@@ -16,8 +16,7 @@ angular.module('paths', [
     SmoothLine,
     Radar
   ].forEach(function(dir) {
-    var name = 'paths' + dir.graph,
-      path = PathsProvider.Paths[dir.graph];
+    var name = 'paths' + dir.graph;
 
     var print = function(prop) {
       return function(curve) {
@@ -31,7 +30,7 @@ angular.module('paths', [
     var printSector = print('sector');
     var printPolygon = print('polygon');
 
-    $compileProvider.directive(name, function($compile, $getTemplate) {
+    $compileProvider.directive(name, function($compile, $getTemplate, Paths) {
       return {
         scope: true,
         replace: true,
@@ -40,7 +39,7 @@ angular.module('paths', [
           var _graphCfg; // once-binded graph config
 
           var updateGraph = function() {
-            var graph = path(_graphCfg);
+            var graph = Paths[dir.graph](_graphCfg);
             scope.curves = (graph.curves || []).map(printLine).map(printArea).map(printSector).map(printPolygon);
             scope.rings = (graph.rings || []).map(printPolygon);
           };
@@ -50,33 +49,27 @@ angular.module('paths', [
             // or stop right away if we have user provided dimensions
             var sizeWatchDereg = scope.$watchCollection(function() {
               return {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
+                // ovveride with user sizes if available
+                width: (_graphCfg || {}).width || element[0].offsetWidth,
+                height: (_graphCfg || {}).height || element[0].offsetHeight
               };
-            }, function(viewport, oldViewport) {
-              // ovveride with user sizes if available
-              viewport = angular.extend(viewport, {
-                width: (_graphCfg || {}).width || viewport.width,
-                height: (_graphCfg || {}).height || viewport.height
-              });
+            }, function(viewport) {
+              scope.viewport = viewport;
 
-              if (!!viewport.width && !!viewport.height) {
-                scope.viewport = viewport;
+              if (!_graphCfg) {
+                init();
+              }
 
-                if (!!oldViewport) {
-                  init();
-                }
-
-                if (!!_graphCfg && !!_graphCfg.width && !!_graphCfg.height) {
-                  // stop watching since we are using
-                  // user's dimensions
-                  sizeWatchDereg();
-                }
+              if (!!_graphCfg && !angular.isUndefined(_graphCfg.width) && !angular.isUndefined(_graphCfg.height)) {
+                // stop watching since we are using
+                // user's dimensions
+                sizeWatchDereg();
               }
             });
           };
 
           var init = function() {
+            _graphCfg = {}; // init
             var scopeName = attributes[name];
             var initWatchDereg = scope.$watch(scopeName, function(graphCfg) {
               if (!!graphCfg && !!graphCfg.data) {
@@ -86,7 +79,7 @@ angular.module('paths', [
 
                 // set up a deep watch for 'data' only
                 scope.$watch(scopeName + '.data', function(data) {
-                  // redraw
+                  // first draw + redraws
                   _graphCfg.data = data;
                   updateGraph();
                 // TODO: check whether it makes sense to optimize
@@ -103,9 +96,6 @@ angular.module('paths', [
                     element.empty().append(contents);
                   });
                 }
-
-                // first draw
-                updateGraph();
               }
             });
           };
