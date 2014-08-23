@@ -4,7 +4,7 @@ Does the usual small things to "angularize" [paths.js](https://github.com/andrea
 - provides a bunch of directives for paths' [high-level API](https://github.com/andreaferretti/paths-js#high-level-api-graphs)
 
 ## In addition
-The directives pre-compute svg paths for `line`, `area` and `sector`, and make them accessible from `curve._line`, `curve._area` and `curve._sector` respectively.
+The directives pre-compute svg paths for `line`, `area`, `sector` and `polygon`, and make them accessible from `curve._line`, `curve._area`, `curve._sector` and `curve._polygon` respectively.
 
 The traditional `paths` approach of calling `curve.<shape>.path.print()` in a template would't match well with `angular` digest cycle performance-wise (especially in the typical `ng-repeat` scenario).
 

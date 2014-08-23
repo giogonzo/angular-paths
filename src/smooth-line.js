@@ -7,6 +7,5 @@ angular.module('paths.SmoothLine', []).constant('SmoothLine', {
       width: viewport.width,
       height: viewport.height
     };
-  },
-  selectedItem: 'smoothLine'
+  }
 });

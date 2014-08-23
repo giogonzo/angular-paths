@@ -7,6 +7,5 @@ angular.module('paths.Stock', []).constant('Stock', {
       width: viewport.width,
       height: viewport.height
     };
-  },
-  selectedItem: 'stock'
+  }
 });

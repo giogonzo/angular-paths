@@ -17,24 +17,36 @@
   <body ng-app="angularPathsExample">
 
     <div ng-controller="PieCtrl">
-        <div class="graph paths-pie" paths-pie="pie">
-            <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
-              <path ng-repeat="curve in curves" ng-attr-d="{{curve._sector}}" stroke="white"/>
-            </svg>
-        </div>
+      <div class="graph" paths-pie="pie">
+        <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
+          <path ng-repeat="curve in curves" ng-attr-d="{{curve._sector}}" stroke="white"/>
+        </svg>
+      </div>
     </div>
     <div ng-controller="BarCtrl" ng-init="foo = 'bar'">
-        <div class="graph paths-bar" paths-bar="bar">
-            <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
-              <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
-            </svg>
-        </div>
+      <div class="graph" paths-bar="bar">
+        <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
+          <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
+        </svg>
+      </div>
     </div>
     <div ng-controller="StockCtrl">
-        <div class="graph paths-stock" paths-stock="stock" paths-template="templates/line.html"></div>
+      <div class="graph" paths-stock="stock" paths-template="templates/line.html"></div>
     </div>
     <div ng-controller="SmoothLineCtrl">
-        <div class="graph paths-smooth-line" paths-smooth-line="smoothLine" paths-template="templates/line.html"></div>
+      <div class="graph" paths-smooth-line="smoothLine" paths-template="templates/line.html"></div>
+    </div>
+    <div ng-controller="RadarCtrl">
+      <div class="graph" paths-radar="radar">
+        <select ng-model="selectedIndex" ng-init="selectedIndex = 0" ng-options="curve.index as 'Pokemon ' + curve.index for curve in curves" style="position: absolute">
+          <option value="">Select pokemon...</option>
+        </select>
+
+        <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
+          <path ng-if="selectedIndex >= 0" ng-repeat="ring in rings" ng-attr-d="{{ring._polygon}}" fill="none" stroke="grey"/>
+          <path ng-if="selectedIndex >= 0" ng-attr-d="{{curves[selectedIndex]._polygon}}"/>
+        </svg>
+      </div>
     </div>
   </body>
 </html>

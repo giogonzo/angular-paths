@@ -14,13 +14,12 @@ angular.module('angularPathsExample', ['paths'])
         { name: 'Argentina', population: 50117096 },
         { name: 'Japan', population: 127290000 }
       ],
-      accessor: function(x) { return x.population; },
-      // template: 'templates/pie.html'
+      accessor: function(x) { return x.population; }
     };
 
     $interval(function() {
       $scope.pie.data[0].population = sinOnRange(59859996);
-    }, 50);
+    }, 100);
   })
   .controller('BarCtrl', function($scope, $interval) {
     $scope.bar = {
@@ -46,7 +45,7 @@ angular.module('angularPathsExample', ['paths'])
 
     $interval(function() {
       $scope.bar.data[0][0].population = sinOnRange(59859996);
-    }, 50);
+    }, 100);
   })
   .controller('StockCtrl', function($scope, $interval) {
     $scope.stock = {
@@ -74,7 +73,7 @@ angular.module('angularPathsExample', ['paths'])
 
     $interval(function() {
       $scope.stock.data[0][0].value = sinOnRange(13);
-    }, 50);
+    }, 100);
   })
   .controller('SmoothLineCtrl', function($scope, $interval) {
     $scope.smoothLine = {
@@ -102,5 +101,27 @@ angular.module('angularPathsExample', ['paths'])
 
     $interval(function() {
       $scope.smoothLine.data[0][0].value = sinOnRange(13);
-    }, 50);
+    }, 100);
+  })
+  .controller('RadarCtrl', function($scope, $interval) {
+    $scope.radar = {
+      data: [
+        { hp: 45, attack: 49, defense: 80, sp_attack: 65, sp_defense: 65, speed: 45 },
+        { hp: 60, attack: 62, defense: 63, sp_attack: 80, sp_defense: 80, speed: 60 },
+        { hp: 80, attack: 82, defense: 83, sp_attack: 100, sp_defense: 100, speed: 80 },
+        { hp: 45, attack: 25, defense: 50, sp_attack: 25, sp_defense: 25, speed: 35 }
+      ],
+      accessor: {
+        attack: function(x) { return x.attack; },
+        defense: function(x) { return x.defense; },
+        speed: function(x) { return x.speed; },
+        hp: function(x) { return x.hp; },
+        sp_attack: function(x) { return x.sp_attack; },
+      },
+      rings: 5
+    };
+
+    $interval(function() {
+      $scope.radar.data[0].attack = sinOnRange(49);
+    }, 100);
   });
