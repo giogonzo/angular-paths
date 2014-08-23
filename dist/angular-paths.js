@@ -1,3 +1,4 @@
+(function (angular) {
 'use strict';
 
 angular.module('paths', [
@@ -6,16 +7,30 @@ angular.module('paths', [
   'paths.Pie',
   'paths.Bar',
   'paths.Stock',
-  'paths.SmoothLine'
-]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "Stock", "SmoothLine", function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine) {
+  'paths.SmoothLine',
+  'paths.Radar'
+]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "Stock", "SmoothLine", "Radar", function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar) {
   [
     Pie,
     Bar,
     Stock,
-    SmoothLine
+    SmoothLine,
+    Radar
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph,
       path = PathsProvider.Paths[dir.graph];
+
+    var print = function(prop) {
+      return function(curve) {
+        var printed = {};
+        printed['_' + prop] = !!curve[prop] || !!curve.path ? (curve[prop] || curve).path.print() : undefined;
+        return angular.extend(curve, printed);
+      };
+    };
+    var printLine = print('line');
+    var printArea = print('area');
+    var printSector = print('sector');
+    var printPolygon = print('polygon');
 
     $compileProvider.directive(name, function($compile, $getTemplate) {
       return {
@@ -26,13 +41,9 @@ angular.module('paths', [
           var _graphCfg; // once-binded graph config
 
           var updateGraph = function() {
-            scope.curves = path(_graphCfg).curves.map(function(curve) {
-              return angular.extend(curve, {
-                _line: !!curve.line ? curve.line.path.print() : undefined,
-                _area: !!curve.area ? curve.area.path.print() : undefined,
-                _sector: !!curve.sector ? curve.sector.path.print() : undefined
-              });
-            });
+            var graph = path(_graphCfg);
+            scope.curves = (graph.curves || []).map(printLine).map(printArea).map(printSector).map(printPolygon);
+            scope.rings = (graph.rings || []).map(printPolygon);
           };
 
           var startSizeWatch = function() {
@@ -40,8 +51,8 @@ angular.module('paths', [
             // or stop right away if we have user provided dimensions
             var sizeWatchDereg = scope.$watchCollection(function() {
               return {
-                width: element.width(),
-                height: element.height()
+                width: element[0].offsetWidth,
+                height: element[0].offsetHeight
               };
             }, function(viewport, oldViewport) {
               // ovveride with user sizes if available
@@ -90,7 +101,7 @@ angular.module('paths', [
                   $getTemplate(templateOrUrl).then(function(template) {
                     var contents = angular.element(template);
                     $compile(contents)(scope);
-                    element.html(contents);
+                    element.empty().append(contents);
                   });
                 }
 
@@ -142,6 +153,17 @@ angular.module('paths.Pie', []).constant('Pie', {
 });
 'use strict';
 
+angular.module('paths.Radar', []).constant('Radar', {
+  graph: 'Radar',
+  defaults: function(viewport) {
+    return {
+      center: [viewport.width / 2, viewport.height / 2],
+      r: Math.min(viewport.width, viewport.height) / 2
+    };
+  }
+});
+'use strict';
+
 angular.module('paths.SmoothLine', []).constant('SmoothLine', {
   graph: 'SmoothLine',
   defaults: function(viewport) {
@@ -149,8 +171,7 @@ angular.module('paths.SmoothLine', []).constant('SmoothLine', {
       width: viewport.width,
       height: viewport.height
     };
-  },
-  selectedItem: 'smoothLine'
+  }
 });
 'use strict';
 
@@ -161,6 +182,5 @@ angular.module('paths.Stock', []).constant('Stock', {
       width: viewport.width,
       height: viewport.height
     };
-  },
-  selectedItem: 'stock'
-});
+  }
+});})(window.angular);
