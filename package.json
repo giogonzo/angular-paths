@@ -1,6 +1,6 @@
 {
   "name": "angular-paths",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "devDependencies": {
     "grunt": "~0.4.5",
     "load-grunt-tasks": "~0.6.0",

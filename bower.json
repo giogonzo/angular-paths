@@ -1,6 +1,6 @@
 {
   "name": "angular-paths",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "authors": [
     "Giovanni Gonzaga <giovanni@buildo.io>"
   ],
@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "paths-js": "git@github.com:buildo/paths-js.git#f94a8056d4cf427c3e7d255bb056c55ccc69a34f",
-    "angular": "^1.2",
+    "angular": "~1.2.23",
     "angular-get-template": "~0.1.0"
   },
   "devDependencies": {
