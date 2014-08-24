@@ -22,8 +22,8 @@
     "tests"
   ],
   "dependencies": {
-    "paths-js": "~0.2.12",
-    "angular": "~1.2.22",
+    "paths-js": "git@github.com:buildo/paths-js.git#f94a8056d4cf427c3e7d255bb056c55ccc69a34f",
+    "angular": "^1.2",
     "angular-get-template": "~0.1.0"
   },
   "devDependencies": {

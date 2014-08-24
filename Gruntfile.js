@@ -42,8 +42,8 @@ module.exports = function(grunt) {
 
     concat: {
       options: {
-         banner: '(function (angular) {\n',
-        footer: '})(window.angular);'
+         banner: '(function(angular) {\n',
+        footer: '\n})(window.angular);'
       },
       dist: {
         dest: 'dist/angular-paths.js',
