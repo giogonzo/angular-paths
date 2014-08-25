@@ -31,7 +31,7 @@ angular.module('paths', [
     var printSector = print('sector');
     var printPolygon = print('polygon');
 
-    $compileProvider.directive(name, function($compile, $getTemplate, Paths) {
+    $compileProvider.directive(name, /*@ngInject*/ ["$compile", "$getTemplate", "Paths", function($compile, $getTemplate, Paths) {
       return {
         scope: true,
         replace: true,
@@ -104,7 +104,7 @@ angular.module('paths', [
           startSizeWatch();
         }
       };
-    });
+    }]);
   });
 }]);
 
