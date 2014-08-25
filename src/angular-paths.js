@@ -30,7 +30,7 @@ angular.module('paths', [
     var printSector = print('sector');
     var printPolygon = print('polygon');
 
-    $compileProvider.directive(name, function($compile, $getTemplate, Paths) {
+    $compileProvider.directive(name, /*@ngInject*/ function($compile, $getTemplate, Paths) {
       return {
         scope: true,
         replace: true,
