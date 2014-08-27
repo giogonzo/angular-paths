@@ -39,7 +39,9 @@ angular.module('paths', [
         replace: true,
         restrict: 'AE',
         link: function(scope, element, attributes) {
-          var _graphCfg; // once-binded graph config
+          var _graphCfg, // once-binded graph config
+            measuredSize,
+            sizeWatchDereg;
 
           var updateGraph = function() {
             var graph = Paths[dir.graph](_graphCfg);
@@ -50,23 +52,16 @@ angular.module('paths', [
           var startSizeWatch = function() {
             // keep watching until we get a valid DOM computed size
             // or stop right away if we have user provided dimensions
-            var sizeWatchDereg = scope.$watchCollection(function() {
+            sizeWatchDereg = scope.$watchCollection(function() {
               return {
-                // ovveride with user sizes if available
-                width: (_graphCfg || {}).width || element[0].offsetWidth,
-                height: (_graphCfg || {}).height || element[0].offsetHeight
+                width: element[0].offsetWidth,
+                height: element[0].offsetHeight
               };
-            }, function(viewport) {
-              scope.viewport = viewport;
+            }, function(size) {
+              measuredSize = size;
 
               if (!_graphCfg) {
                 init();
-              }
-
-              if (!!_graphCfg && !angular.isUndefined(_graphCfg.width) && !angular.isUndefined(_graphCfg.height)) {
-                // stop watching since we are using
-                // user's dimensions
-                sizeWatchDereg();
               }
             });
           };
@@ -78,6 +73,28 @@ angular.module('paths', [
               if (!!graphCfg && !!graphCfg.data) {
                 // stop watching the whole config
                 initWatchDereg();
+
+                if (!angular.isUndefined(_graphCfg.width) && !angular.isUndefined(_graphCfg.height)) {
+                  // stop watching since we are using
+                  // user's dimensions
+                  sizeWatchDereg();
+                }
+
+                // init viewport
+                var viewport = {
+                  width: graphCfg.width || measuredSize.width,
+                  height: graphCfg.height || measuredSize.height,
+                  paddingTop: graphCfg.paddingTop || graphCfg.padding || 0,
+                  paddingRight: graphCfg.paddingRight || graphCfg.padding || 0,
+                  paddingBottom: graphCfg.paddingBottom || graphCfg.padding || 0,
+                  paddingLeft: graphCfg.paddingLeft || graphCfg.padding || 0
+                };
+                scope.viewport = angular.extend(viewport, {
+                  innerWidth: viewport.width - viewport.paddingLeft - viewport.paddingRight,
+                  innerHeight: viewport.height - viewport.paddingTop - viewport.paddingBottom
+                });
+
+                // init config using directive defaults
                 _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg);
 
                 // set up a deep watch for 'data' only
@@ -116,8 +133,8 @@ angular.module('paths.Bar', []).constant('Bar', {
   graph: 'Bar',
   defaults: function(viewport) {
     return {
-      width: viewport.width,
-      height: viewport.height
+      width: viewport.innerWidth,
+      height: viewport.innerHeight
     };
   }
 });
@@ -137,9 +154,9 @@ angular.module('paths.Pie', []).constant('Pie', {
   graph: 'Pie',
   defaults: function(viewport) {
     return {
-      center: [viewport.width / 2, viewport.height / 2],
+      center: [viewport.innerWidth / 2, viewport.innerHeight / 2],
       r: 0,
-      R: Math.min(viewport.width, viewport.height) / 2
+      R: Math.min(viewport.innerWidth, viewport.innerHeight) / 2
     };
   }
 });
@@ -149,8 +166,8 @@ angular.module('paths.Radar', []).constant('Radar', {
   graph: 'Radar',
   defaults: function(viewport) {
     return {
-      center: [viewport.width / 2, viewport.height / 2],
-      r: Math.min(viewport.width, viewport.height) / 2
+      center: [viewport.innerWidth / 2, viewport.innerHeight / 2],
+      r: Math.min(viewport.innerWidth, viewport.innerHeight) / 2
     };
   }
 });
@@ -160,8 +177,8 @@ angular.module('paths.SmoothLine', []).constant('SmoothLine', {
   graph: 'SmoothLine',
   defaults: function(viewport) {
     return {
-      width: viewport.width,
-      height: viewport.height
+      width: viewport.innerWidth,
+      height: viewport.innerHeight
     };
   }
 });
@@ -171,8 +188,8 @@ angular.module('paths.StackedBar', []).constant('StackedBar', {
   graph: 'StackedBar',
   defaults: function(viewport) {
     return {
-      width: viewport.width,
-      height: viewport.height
+      width: viewport.innerWidth,
+      height: viewport.innerHeight
     };
   }
 });
@@ -183,8 +200,8 @@ angular.module('paths.Stock', []).constant('Stock', {
   graph: 'Stock',
   defaults: function(viewport) {
     return {
-      width: viewport.width,
-      height: viewport.height
+      width: viewport.innerWidth,
+      height: viewport.innerHeight
     };
   }
 });
