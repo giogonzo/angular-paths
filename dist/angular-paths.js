@@ -6,13 +6,15 @@ angular.module('paths', [
   'paths.PathsProvider',
   'paths.Pie',
   'paths.Bar',
+  'paths.StackedBar',
   'paths.Stock',
   'paths.SmoothLine',
   'paths.Radar'
-]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "Stock", "SmoothLine", "Radar", function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar) {
+]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "StackedBar", "Stock", "SmoothLine", "Radar", function(PathsProvider, $compileProvider, Pie, Bar, StackedBar, Stock, SmoothLine, Radar) {
   [
     Pie,
     Bar,
+    StackedBar,
     Stock,
     SmoothLine,
     Radar
@@ -163,6 +165,18 @@ angular.module('paths.SmoothLine', []).constant('SmoothLine', {
     };
   }
 });
+'use strict';
+
+angular.module('paths.StackedBar', []).constant('StackedBar', {
+  graph: 'StackedBar',
+  defaults: function(viewport) {
+    return {
+      width: viewport.width,
+      height: viewport.height
+    };
+  }
+});
+
 'use strict';
 
 angular.module('paths.Stock', []).constant('Stock', {
