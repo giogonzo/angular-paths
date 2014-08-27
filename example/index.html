@@ -23,7 +23,7 @@
         </svg>
       </div>
     </div>
-    <div ng-controller="BarCtrl" ng-init="foo = 'bar'">
+    <div ng-controller="BarCtrl">
       <div class="graph" paths-bar="bar">
         <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
           <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
@@ -45,6 +45,10 @@
         <svg ng-if="!!viewport && selectedIndex >= 0 && curves.length > 0" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
           <path ng-repeat="ring in rings" ng-attr-d="{{ring._polygon}}" fill="none" stroke="grey"/>
           <path ng-attr-d="{{curves[selectedIndex]._polygon}}"/>
+    <div ng-controller="StackedBarCtrl">
+      <div class="graph" paths-stacked-bar="stackedBar">
+        <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
+          <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
         </svg>
       </div>
     </div>
