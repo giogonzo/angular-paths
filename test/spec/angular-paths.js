@@ -3,6 +3,16 @@
 describe('angular-paths directive', function() {
   var $compile, $rootScope, $timeout, Paths;
   var parentScopes = {}, scopes = {};
+  var defaultViewport = {
+    height: 0,
+    width: 0,
+    paddingTop: 0,
+    paddingRight: 0,
+    paddingBottom: 0,
+    paddingLeft: 0,
+    innerWidth: 0,
+    innerHeight: 0
+  };
 
   var setupDirective = function(graph, cfgName, cfg) {
     parentScopes[graph] = $rootScope.$new(true);
@@ -37,6 +47,7 @@ describe('angular-paths directive', function() {
         speed: function(x) { return x.speed; }
       },
       rings: 5,
+      padding: 10,
       width: 100,
       height: 100
     });
@@ -52,10 +63,16 @@ describe('angular-paths directive', function() {
 
 
   it('should update the `viewport` scope object with user dimensions', function() {
-    expect(scopes.Radar.viewport).toEqual({
+    expect(scopes.Radar.viewport).toEqual(angular.extend(defaultViewport, {
       width: 100,
-      height: 100
-    });
+      height: 100,
+      paddingTop: 10,
+      paddingRight: 10,
+      paddingBottom: 10,
+      paddingLeft: 10,
+      innerWidth: 80,
+      innerHeight: 80
+    }));
   });
 
   it('should update the `curves`, `rings` scope values', function() {

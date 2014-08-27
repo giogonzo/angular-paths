@@ -19,7 +19,9 @@
     <div ng-controller="PieCtrl">
       <div class="graph" paths-pie="pie">
         <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
-          <path ng-repeat="curve in curves" ng-attr-d="{{curve._sector}}" stroke="white"/>
+          <g ng-attr-transform="translate({{viewport.paddingLeft}}, {{viewport.paddingTop}})">
+            <path ng-repeat="curve in curves" ng-attr-d="{{curve._sector}}" stroke="white"/>
+          </g>
         </svg>
       </div>
     </div>
@@ -42,9 +44,14 @@
           <option value="">Select pokemon...</option>
         </select>
 
-        <svg ng-if="!!viewport && selectedIndex >= 0 && curves.length > 0" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}" ng-attr-transform="translate({{viewport.width / 2}}, {{viewport.height / 2}})">
-          <path ng-repeat="ring in rings" ng-attr-d="{{ring._polygon}}" fill="none" stroke="grey"/>
-          <path ng-attr-d="{{curves[selectedIndex]._polygon}}"/>
+        <svg ng-if="!!viewport && selectedIndex >= 0 && curves.length > 0" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
+          <g ng-attr-transform="translate({{viewport.paddingLeft}}, {{viewport.paddingTop}})">
+            <path ng-repeat="ring in rings" ng-attr-d="{{ring._polygon}}" fill="none" stroke="grey"/>
+            <path ng-attr-d="{{curves[selectedIndex]._polygon}}"/>
+          </g>
+        </svg>
+      </div>
+    </div>
     <div ng-controller="StackedBarCtrl">
       <div class="graph" paths-stacked-bar="stackedBar">
         <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">

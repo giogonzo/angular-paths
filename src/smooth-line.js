@@ -4,8 +4,8 @@ angular.module('paths.SmoothLine', []).constant('SmoothLine', {
   graph: 'SmoothLine',
   defaults: function(viewport) {
     return {
-      width: viewport.width,
-      height: viewport.height
+      width: viewport.innerWidth,
+      height: viewport.innerHeight
     };
   }
 });
