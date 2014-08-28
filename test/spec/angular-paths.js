@@ -68,8 +68,12 @@ describe('angular-paths directive', function() {
         [21, 22, 22]
       ],
       yaccessor: function(y) { return y },
+      xaccessor: function(x) { return x },
       axes: {
         y: {
+          step: 2
+        },
+        x: {
           step: 2
         }
       }
@@ -176,6 +180,13 @@ describe('angular-paths directive', function() {
         position: step
       };
     }));
+
+    expect(scopes.Stock.x).toEqual([12, 14, 16, 18, 20, 22].map(function(step) {
+      return {
+        value: step,
+        position: step
+      };
+    }));
   });
 
   it('should precompute each graph\'s available shapes', function() {
@@ -216,6 +227,9 @@ describe('angular-paths directive', function() {
 
     expect(scopes.Stock._y).toBeDefined();
     expect(scopes.Stock._y.length).toBe(scopes.Stock.y.length);
+
+    expect(scopes.Stock._x).toBeDefined();
+    expect(scopes.Stock._x.length).toBe(scopes.Stock.x.length);
   });
 
   describe('should update scaled axes', function() {
@@ -231,7 +245,7 @@ describe('angular-paths directive', function() {
       expect(scopes.Bar._y).not.toEqual(previousY);
     });
 
-    it('Stock', function() {
+    it('Stock y', function() {
       var previousY = angular.copy(scopes.Stock._y);
       scopes.Stock.stock.axes.y = {
         steps: 2
@@ -241,6 +255,18 @@ describe('angular-paths directive', function() {
       expect(scopes.Stock._y).toBeDefined();
       expect(scopes.Stock._y.length).toBe(scopes.Stock.y.length);
       expect(scopes.Stock._y).not.toEqual(previousY);
+    });
+
+    it('Stock x', function() {
+      var previousX = angular.copy(scopes.Stock._x);
+      scopes.Stock.stock.axes.x = {
+        steps: 2
+      };
+      scopes.Stock.$digest();
+
+      expect(scopes.Stock._x).toBeDefined();
+      expect(scopes.Stock._x.length).toBe(scopes.Stock.x.length);
+      expect(scopes.Stock._x).not.toEqual(previousX);
     });
   });
 });
