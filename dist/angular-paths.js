@@ -31,6 +31,15 @@ angular.module('paths', [
     var printSector = print('sector');
     var printPolygon = print('polygon');
 
+    var scaleStepWith = function(scaleFn) {
+      return function(step) {
+        return {
+          value: step.value,
+          position: scaleFn(step.position)
+        };
+      };
+    };
+
     $compileProvider.directive(name, /*@ngInject*/ ["$compile", "$getTemplate", "Paths", function($compile, $getTemplate, Paths) {
       return {
         scope: true,
@@ -54,10 +63,10 @@ angular.module('paths', [
             scope.yscale = graph.yscale || graph.scale;
 
             if (!!scope.x && !!scope.xscale) {
-              scope._x = scope.x.map(scope.xscale);
+              scope._x = scope.x.map(scaleStepWith(scope.xscale));
             }
             if (!!scope.y && !!scope.yscale) {
-              scope._y = scope.y.map(scope.yscale);
+              scope._y = scope.y.map(scaleStepWith(scope.yscale));
             }
           };
 
