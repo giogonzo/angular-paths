@@ -104,7 +104,7 @@ describe('angular-paths directive', function() {
     expect(Paths.Pie.callCount).toBe(1);
   });
 
-  it('should call the paths.Graph contructor once per `data` change', function() {
+  it('should call the paths.Graph contructor once per `cfg.data` change', function() {
     expect(Paths.Radar.callCount).toBe(1);
 
     parentScopes.Radar.radar.data[0].hp = 80;
@@ -113,6 +113,20 @@ describe('angular-paths directive', function() {
     expect(Paths.Radar.callCount).toBe(2);
 
     parentScopes.Radar.radar.data[0].hp = 50;
+    scopes.Radar.$digest();
+
+    expect(Paths.Radar.callCount).toBe(3);
+  });
+
+  it('should call the paths.Graph contructor once per `cfg` change', function() {
+    expect(Paths.Radar.callCount).toBe(1);
+
+    parentScopes.Radar.radar.width = 10;
+    scopes.Radar.$digest();
+
+    expect(Paths.Radar.callCount).toBe(2);
+
+    parentScopes.Radar.radar.padding = 0;
     scopes.Radar.$digest();
 
     expect(Paths.Radar.callCount).toBe(3);
