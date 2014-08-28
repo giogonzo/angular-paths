@@ -5,15 +5,13 @@ angular.module('paths', [
   'paths.PathsProvider',
   'paths.Pie',
   'paths.Bar',
-  'paths.StackedBar',
   'paths.Stock',
   'paths.SmoothLine',
   'paths.Radar'
-]).config(function(PathsProvider, $compileProvider, Pie, Bar, StackedBar, Stock, SmoothLine, Radar) {
+]).config(function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar) {
   [
     Pie,
     Bar,
-    StackedBar,
     Stock,
     SmoothLine,
     Radar

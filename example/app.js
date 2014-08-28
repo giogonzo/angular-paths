@@ -124,30 +124,4 @@ angular.module('angularPathsExample', ['paths'])
     $interval(function() {
       $scope.radar.data[0].attack = sinOnRange(49);
     }, 100);
-  })
-  .controller('StackedBarCtrl', function($scope, $interval) {
-    $scope.stackedBar = {
-      data: [
-        [
-          { name: 'Italy', population: 59859996 },
-          { name: 'Spain', population: 46704314 },
-          { name: 'France', population: 65806000 },
-          { name: 'Romania', population: 20121641 },
-          { name: 'Greece', population: 10815197 }
-        ],
-        [
-          { name: 'Zambia', population: 14580290 },
-          { name: 'Cameroon', population: 20386799 },
-          { name: 'Nigeria', population: 173615000 },
-          { name: 'Ethiopia', population: 86613986 },
-          { name: 'Ghana', population: 24658823 }
-        ]
-      ],
-      accessor: function(x) { return x.population; },
-      gutter: 10
-    };
-
-    $interval(function() {
-      $scope.stackedBar.data[0][0].population = sinOnRange(59859996);
-    }, 100);
   });
