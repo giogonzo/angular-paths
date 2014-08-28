@@ -65,19 +65,9 @@ angular.module('paths', [
           };
 
           var init = function() {
-            _graphCfg = {}; // init
             var scopeName = attributes[name];
-            var initWatchDereg = scope.$watch(scopeName, function(graphCfg) {
+            scope.$watch(scopeName, function(graphCfg) {
               if (!!graphCfg && !!graphCfg.data) {
-                // stop watching the whole config
-                initWatchDereg();
-
-                if (!angular.isUndefined(_graphCfg.width) && !angular.isUndefined(_graphCfg.height)) {
-                  // stop watching since we are using
-                  // user's dimensions
-                  sizeWatchDereg();
-                }
-
                 // init viewport
                 var viewport = {
                   width: graphCfg.width || measuredSize.width,
@@ -92,33 +82,27 @@ angular.module('paths', [
                   innerHeight: viewport.height - viewport.paddingTop - viewport.paddingBottom
                 });
 
-                // init config using directive defaults
+                if (!_graphCfg) { // first run
+                  // handle 'template' option
+                  var templateOrUrl = !!graphCfg && !!graphCfg.template ? graphCfg.template : attributes.pathsTemplate;
+                  if (!!templateOrUrl) {
+                    $getTemplate(templateOrUrl).then(function(template) {
+                      var contents = angular.element(template);
+                      $compile(contents)(scope);
+                      element.empty().append(contents);
+                    });
+                  }
+                }
+
+                // update config
                 _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg, {
                   width: viewport.innerWidth,
                   height: viewport.innerHeight
                 });
 
-                // set up a deep watch for 'data' only
-                scope.$watch(scopeName + '.data', function(data) {
-                  // first draw + redraws
-                  _graphCfg.data = data;
-                  updateGraph();
-                // TODO: check whether it makes sense to optimize
-                // this with a $watchCollection
-                // on 1 (more?) nesting levels
-                }, true);
-
-                // handle 'template' option
-                var templateOrUrl = !!_graphCfg && !!_graphCfg.template ? _graphCfg.template : attributes.pathsTemplate;
-                if (!!templateOrUrl) {
-                  $getTemplate(templateOrUrl).then(function(template) {
-                    var contents = angular.element(template);
-                    $compile(contents)(scope);
-                    element.empty().append(contents);
-                  });
-                }
+                updateGraph();
               }
-            });
+            }, true);
           };
 
           startSizeWatch();
