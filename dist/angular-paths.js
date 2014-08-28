@@ -52,6 +52,13 @@ angular.module('paths', [
             scope.scale = graph.scale;
             scope.xscale = graph.xscale || graph.scale;
             scope.yscale = graph.yscale || graph.scale;
+
+            if (!!scope.x && !!scope.xscale) {
+              scope._x = scope.x.map(scope.xscale);
+            }
+            if (!!scope.y && !!scope.yscale) {
+              scope._y = scope.y.map(scope.yscale);
+            }
           };
 
           var startSizeWatch = function() {
