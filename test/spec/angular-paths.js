@@ -57,22 +57,39 @@ describe('angular-paths directive', function() {
         { name: 'Italy', population: 59859996 },
         { name: 'Vatican City', population: 768 }
       ],
-      accessor: function(x) { return x.population; }
+      accessor: function(x) { return x.population; },
+      width: 100,
+      height: 100
     });
   });
 
 
-  it('should update the `viewport` scope object with user dimensions', function() {
-    expect(scopes.Radar.viewport).toEqual(angular.extend(defaultViewport, {
-      width: 100,
-      height: 100,
-      paddingTop: 10,
-      paddingRight: 10,
-      paddingBottom: 10,
-      paddingLeft: 10,
-      innerWidth: 80,
-      innerHeight: 80
-    }));
+  describe('`viewport`', function() {
+    it('should be updated with user dimensions, considering padding', function() {
+      expect(scopes.Pie.viewport).toEqual(angular.extend(defaultViewport, {
+        width: 100,
+        height: 100,
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+        innerWidth: 100,
+        innerHeight: 100
+      }));
+    });
+
+    it('should be updated with user dimensions, considering padding', function() {
+      expect(scopes.Radar.viewport).toEqual(angular.extend(defaultViewport, {
+        width: 100,
+        height: 100,
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 10,
+        innerWidth: 80,
+        innerHeight: 80
+      }));
+    });
   });
 
   it('should update the `curves`, `rings` scope values', function() {

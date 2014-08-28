@@ -55,7 +55,9 @@
     <div ng-controller="StackedBarCtrl">
       <div class="graph" paths-stacked-bar="stackedBar">
         <svg ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
-          <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
+          <g ng-attr-transform="translate({{viewport.paddingLeft}}, {{viewport.paddingTop}})">
+            <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
+          </g>
         </svg>
       </div>
     </div>
