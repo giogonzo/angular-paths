@@ -66,7 +66,13 @@ describe('angular-paths directive', function() {
       data: [
         [13, 12, 15],
         [21, 22, 22]
-      ]
+      ],
+      yaccessor: function(y) { return y },
+      axes: {
+        y: {
+          step: 2
+        }
+      }
     });
 
     setupDirective('Bar', 'bar', {
@@ -75,7 +81,9 @@ describe('angular-paths directive', function() {
         [2, 4, 8]
       ],
       axes: {
-        step: 2
+        y: {
+          step: 2
+        }
       }
     });
   });
@@ -155,7 +163,19 @@ describe('angular-paths directive', function() {
   });
 
   it('should update x,y helpers axes in scope', function() {
-    expect(scopes.Bar.y).toEqual([0, 2, 4, 6, 8]);
+    expect(scopes.Bar.y).toEqual([0, 2, 4, 6, 8].map(function(step) {
+      return {
+        value: step,
+        position: step
+      };
+    }));
+
+    expect(scopes.Stock.y).toEqual([12, 14, 16, 18, 20, 22].map(function(step) {
+      return {
+        value: step,
+        position: step
+      };
+    }));
   });
 
   it('should precompute each graph\'s available shapes', function() {
@@ -193,18 +213,34 @@ describe('angular-paths directive', function() {
   it('should precompute scaled axes', function() {
     expect(scopes.Bar._y).toBeDefined();
     expect(scopes.Bar._y.length).toBe(scopes.Bar.y.length);
+
+    expect(scopes.Stock._y).toBeDefined();
+    expect(scopes.Stock._y.length).toBe(scopes.Stock.y.length);
   });
 
-  it('should update scaled axes', function() {
-    var previousY = angular.copy(scopes.Bar._y);
-    scopes.Bar.bar.axes = {
-      steps: 2
-    };
-    scopes.Bar.$digest();
+  describe('should update scaled axes', function() {
+    it('Bar', function() {
+      var previousY = angular.copy(scopes.Bar._y);
+      scopes.Bar.bar.axes.y = {
+        steps: 2
+      };
+      scopes.Bar.$digest();
 
-    expect(scopes.Bar._y).toBeDefined();
-    expect(scopes.Bar._y.length).toBe(scopes.Bar.y.length);
-    expect(scopes.Bar._y).not.toEqual(previousY);
+      expect(scopes.Bar._y).toBeDefined();
+      expect(scopes.Bar._y.length).toBe(scopes.Bar.y.length);
+      expect(scopes.Bar._y).not.toEqual(previousY);
+    });
+
+    it('Stock', function() {
+      var previousY = angular.copy(scopes.Stock._y);
+      scopes.Stock.stock.axes.y = {
+        steps: 2
+      };
+      scopes.Stock.$digest();
+
+      expect(scopes.Stock._y).toBeDefined();
+      expect(scopes.Stock._y.length).toBe(scopes.Stock.y.length);
+      expect(scopes.Stock._y).not.toEqual(previousY);
+    });
   });
-
 });
