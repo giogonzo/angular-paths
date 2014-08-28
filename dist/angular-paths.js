@@ -95,7 +95,10 @@ angular.module('paths', [
                 });
 
                 // init config using directive defaults
-                _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg);
+                _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg, {
+                  width: viewport.innerWidth,
+                  height: viewport.innerHeight
+                });
 
                 // set up a deep watch for 'data' only
                 scope.$watch(scopeName + '.data', function(data) {
