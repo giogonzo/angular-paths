@@ -44,6 +44,13 @@ angular.module('paths', [
             var graph = Paths[dir.graph](_graphCfg);
             scope.curves = (graph.curves || []).map(printLine).map(printArea).map(printSector).map(printPolygon);
             scope.rings = (graph.rings || []).map(printPolygon);
+
+            scope.x = graph.x;
+            scope.y = graph.y;
+
+            scope.scale = graph.scale;
+            scope.xscale = graph.xscale || graph.scale;
+            scope.yscale = graph.yscale || graph.scale;
           };
 
           var startSizeWatch = function() {

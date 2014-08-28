@@ -61,6 +61,23 @@ describe('angular-paths directive', function() {
       width: 100,
       height: 100
     });
+
+    setupDirective('Stock', 'stock', {
+      data: [
+        [13, 12, 15],
+        [21, 22, 22]
+      ]
+    });
+
+    setupDirective('Bar', 'bar', {
+      data: [
+        [3, 9, 5],
+        [2, 4, 8]
+      ],
+      axes: {
+        step: 2
+      }
+    });
   });
 
 
@@ -130,6 +147,15 @@ describe('angular-paths directive', function() {
     scopes.Radar.$digest();
 
     expect(Paths.Radar.callCount).toBe(3);
+  });
+
+  it('should update scale functions in scope', function() {
+    expect(scopes.Stock.yscale).toBeDefined();
+    expect(scopes.Stock.xscale).toBeDefined();
+  });
+
+  it('should update x,y helpers axes in scope', function() {
+    expect(scopes.Bar.y).toEqual([0, 2, 4, 6, 8]);
   });
 
   it('should precompute each graph\'s available shapes', function() {
