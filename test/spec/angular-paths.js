@@ -189,4 +189,22 @@ describe('angular-paths directive', function() {
       expect(curve._polygon).toEqual(curve.polygon.path.print());
     });
   });
+
+  it('should precompute scaled axes', function() {
+    expect(scopes.Bar._y).toBeDefined();
+    expect(scopes.Bar._y.length).toBe(scopes.Bar.y.length);
+  });
+
+  it('should update scaled axes', function() {
+    var previousY = angular.copy(scopes.Bar._y);
+    scopes.Bar.bar.axes = {
+      steps: 2
+    };
+    scopes.Bar.$digest();
+
+    expect(scopes.Bar._y).toBeDefined();
+    expect(scopes.Bar._y.length).toBe(scopes.Bar.y.length);
+    expect(scopes.Bar._y).not.toEqual(previousY);
+  });
+
 });
