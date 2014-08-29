@@ -8,14 +8,16 @@ angular.module('paths', [
   'paths.Bar',
   'paths.Stock',
   'paths.SmoothLine',
-  'paths.Radar'
-]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "Stock", "SmoothLine", "Radar", function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar) {
+  'paths.Radar',
+  'paths.IntervalGauge'
+]).config(["PathsProvider", "$compileProvider", "Pie", "Bar", "Stock", "SmoothLine", "Radar", "IntervalGauge", function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar, IntervalGauge) {
   [
     Pie,
     Bar,
     Stock,
     SmoothLine,
-    Radar
+    Radar,
+    IntervalGauge
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph;
 
@@ -139,6 +141,17 @@ angular.module('paths', [
 
 angular.module('paths.Bar', []).constant('Bar', {
   graph: 'Bar',
+  defaults: function(viewport) {
+    return {
+      width: viewport.innerWidth,
+      height: viewport.innerHeight
+    };
+  }
+});
+'use strict';
+
+angular.module('paths.IntervalGauge', []).constant('IntervalGauge', {
+  graph: 'IntervalGauge',
   defaults: function(viewport) {
     return {
       width: viewport.innerWidth,

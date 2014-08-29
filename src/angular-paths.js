@@ -7,14 +7,16 @@ angular.module('paths', [
   'paths.Bar',
   'paths.Stock',
   'paths.SmoothLine',
-  'paths.Radar'
-]).config(function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar) {
+  'paths.Radar',
+  'paths.IntervalGauge'
+]).config(function(PathsProvider, $compileProvider, Pie, Bar, Stock, SmoothLine, Radar, IntervalGauge) {
   [
     Pie,
     Bar,
     Stock,
     SmoothLine,
-    Radar
+    Radar,
+    IntervalGauge
   ].forEach(function(dir) {
     var name = 'paths' + dir.graph;
 

@@ -52,5 +52,14 @@
         </svg>
       </div>
     </div>
+    <div ng-controller="IntervalGaugeCtrl">
+      <div class="graph" paths-interval-gauge="gauge">
+        <svg ng-if="!!viewport" ng-attr-width="{{viewport.width}}" ng-attr-height="{{viewport.height}}">
+          <g ng-attr-transform="translate({{viewport.paddingLeft}}, {{viewport.paddingTop}})">
+            <path ng-repeat="curve in curves" ng-attr-d="{{curve._line}}" stroke="white"/>
+          </g>
+        </svg>
+      </div>
+    </div>
   </body>
 </html>

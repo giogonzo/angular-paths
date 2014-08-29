@@ -124,4 +124,21 @@ angular.module('angularPathsExample', ['paths'])
     $interval(function() {
       $scope.radar.data[0].attack = sinOnRange(49);
     }, 100);
+  })
+  .controller('IntervalGaugeCtrl', function($scope, $interval) {
+    $scope.gauge = {
+      data: [
+        {interval: [40, 60], color: 'yellow'},
+        {interval: [0, 80], color: 'orange'},
+        {interval: [50, 60], color: 'green'},
+        {interval: [0, 100], color: 'red'}
+      ],
+      accessor: function(item) { return item.interval },
+      paddingTop: 140,
+      paddingBottom: 140
+    };
+
+    $interval(function() {
+      $scope.gauge.data[0].interval[0] = sinOnRange(40);
+    }, 100);
   });
