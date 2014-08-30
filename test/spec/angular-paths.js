@@ -119,6 +119,22 @@ describe('angular-paths directive', function() {
         innerHeight: 80
       }));
     });
+
+    it('should be update when user dimensions change', function() {
+      scopes.Radar.radar.padding = 20;
+      scopes.Radar.$digest();
+
+      expect(scopes.Radar.viewport).toEqual(angular.extend(defaultViewport, {
+        width: 100,
+        height: 100,
+        paddingTop: 20,
+        paddingRight: 20,
+        paddingBottom: 20,
+        paddingLeft: 20,
+        innerWidth: 60,
+        innerHeight: 60
+      }));
+    })
   });
 
   it('should update the `curves`, `rings` scope values', function() {

@@ -47,9 +47,25 @@ angular.module('paths', [
         replace: true,
         restrict: 'AE',
         link: function(scope, element, attributes) {
-          var _graphCfg, // once-binded graph config
-            measuredSize,
-            sizeWatchDereg;
+          var _graphCfg, // watched graph cfg
+            measuredSize = {}, // watched measured size
+            userSize = {}, // user dimensions, when available
+            scopeName = attributes[name]; // name of the cfg variable in scope
+
+          var updateViewport = function() {
+            var viewport = {
+              width: userSize.width || measuredSize.width || 0,
+              height: userSize.height || measuredSize.height || 0,
+              paddingTop: userSize.paddingTop || 0,
+              paddingRight: userSize.paddingRight || 0,
+              paddingBottom: userSize.paddingBottom || 0,
+              paddingLeft: userSize.paddingLeft || 0
+            };
+            scope.viewport = angular.extend(viewport, {
+              innerWidth: viewport.width - viewport.paddingLeft - viewport.paddingRight,
+              innerHeight: viewport.height - viewport.paddingTop - viewport.paddingBottom
+            });
+          };
 
           var updateGraph = function() {
             var graph = Paths[dir.graph](_graphCfg);
@@ -71,65 +87,57 @@ angular.module('paths', [
             }
           };
 
-          var startSizeWatch = function() {
-            // keep watching until we get a valid DOM computed size
-            // or stop right away if we have user provided dimensions
-            sizeWatchDereg = scope.$watchCollection(function() {
-              return {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
+          var sizeWatchDereg = scope.$watchCollection(function() {
+            // keep watching DOM computed size
+            return {
+              width: element[0].offsetWidth,
+              height: element[0].offsetHeight
+            };
+          }, function(size) {
+            measuredSize = size;
+
+            updateViewport();
+
+            if (!!_graphCfg) {
+              updateGraph();
+            }
+
+            if (!!userSize && !angular.isUndefined(userSize.width)  && !angular.isUndefined(userSize.height)) {
+              // stop right away if we have user provided dimensions
+              sizeWatchDereg();
+            }
+          });
+
+          scope.$watch(scopeName, function(graphCfg) {
+            if (!!graphCfg && !!graphCfg.data) {
+              userSize = {
+                width: graphCfg.width,
+                height: graphCfg.height,
+                paddingTop: graphCfg.paddingTop || graphCfg.padding || 0,
+                paddingRight: graphCfg.paddingRight || graphCfg.padding || 0,
+                paddingBottom: graphCfg.paddingBottom || graphCfg.padding || 0,
+                paddingLeft: graphCfg.paddingLeft || graphCfg.padding || 0
               };
-            }, function(size) {
-              measuredSize = size;
+              updateViewport();
 
-              if (!_graphCfg) {
-                init();
-              }
-            });
-          };
-
-          var init = function() {
-            var scopeName = attributes[name];
-            scope.$watch(scopeName, function(graphCfg) {
-              if (!!graphCfg && !!graphCfg.data) {
-                // init viewport
-                var viewport = {
-                  width: graphCfg.width || measuredSize.width,
-                  height: graphCfg.height || measuredSize.height,
-                  paddingTop: graphCfg.paddingTop || graphCfg.padding || 0,
-                  paddingRight: graphCfg.paddingRight || graphCfg.padding || 0,
-                  paddingBottom: graphCfg.paddingBottom || graphCfg.padding || 0,
-                  paddingLeft: graphCfg.paddingLeft || graphCfg.padding || 0
-                };
-                scope.viewport = angular.extend(viewport, {
-                  innerWidth: viewport.width - viewport.paddingLeft - viewport.paddingRight,
-                  innerHeight: viewport.height - viewport.paddingTop - viewport.paddingBottom
-                });
-
-                if (!_graphCfg) { // first run
-                  // handle 'template' option
-                  var templateOrUrl = !!graphCfg && !!graphCfg.template ? graphCfg.template : attributes.pathsTemplate;
-                  if (!!templateOrUrl) {
-                    $getTemplate(templateOrUrl).then(function(template) {
-                      var contents = angular.element(template);
-                      $compile(contents)(scope);
-                      element.empty().append(contents);
-                    });
-                  }
+              if (!_graphCfg) { // first run
+                // handle 'template' option
+                var templateOrUrl = !!graphCfg && !!graphCfg.template ? graphCfg.template : attributes.pathsTemplate;
+                if (!!templateOrUrl) {
+                  $getTemplate(templateOrUrl).then(function(template) {
+                    var contents = angular.element(template);
+                    $compile(contents)(scope);
+                    element.empty().append(contents);
+                  });
                 }
-
-                // update config
-                _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg, {
-                  width: viewport.innerWidth,
-                  height: viewport.innerHeight
-                });
-
-                updateGraph();
               }
-            }, true);
-          };
 
-          startSizeWatch();
+              // update config
+              _graphCfg = angular.extend(dir.defaults(scope.viewport), graphCfg);
+
+              updateGraph();
+            }
+          }, true);
         }
       };
     });
