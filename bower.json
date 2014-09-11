@@ -22,7 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "paths-js": "git@github.com:buildo/paths-js.git#additions",
+    "paths-js": "https://github.com/buildo/paths-js.git#additions",
     "angular": "~1.2.23",
     "angular-get-template": "~0.1.0"
   },
