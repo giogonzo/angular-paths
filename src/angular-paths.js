@@ -46,7 +46,8 @@ angular.module('paths', [
         scope: true,
         replace: true,
         restrict: 'AE',
-        link: function(scope, element, attributes) {
+        require: '?ngModel',
+        link: function(scope, element, attributes, ngModelCtrl) {
           var _graphCfg, // watched graph cfg
             measuredSize = {}, // watched measured size
             userSize = {}, // user dimensions, when available
@@ -65,6 +66,13 @@ angular.module('paths', [
               innerWidth: viewport.width - viewport.paddingLeft - viewport.paddingRight,
               innerHeight: viewport.height - viewport.paddingTop - viewport.paddingBottom
             });
+
+            // quick & dirty: export viewport object in ngModel state as '$viewport'
+            if (ngModelCtrl) {
+              ngModelCtrl.$setViewValue(angular.extend(ngModelCtrl.$viewValue, {
+                viewport: angular.copy(scope.viewport)
+              }));
+            }
           };
 
           var updateGraph = function() {
