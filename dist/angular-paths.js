@@ -96,6 +96,12 @@ angular.module('paths', [
             }
           };
 
+          // trigger size watch on window resize
+          var triggerDigest = function() {
+            scope.$digest();
+          };
+          angular.element(window).bind('resize', triggerDigest);
+
           var sizeWatchDereg = scope.$watchCollection(function() {
             // keep watching DOM computed size
             return {
@@ -114,6 +120,7 @@ angular.module('paths', [
             if (!!userSize && !angular.isUndefined(userSize.width)  && !angular.isUndefined(userSize.height)) {
               // stop right away if we have user provided dimensions
               sizeWatchDereg();
+              angular.element(window).unbind('resize', triggerDigest);
             }
           });
 
